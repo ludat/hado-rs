@@ -1,0 +1,5 @@
+image: scorpil/rust:stable
+
+test:
+  script:
+    - cargo test
