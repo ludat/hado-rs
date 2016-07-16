@@ -63,8 +63,7 @@ impl<T, O> Monad<Vec<O>> for Vec<T> {
         where F: FnMut(T) -> Vec<O> {
         let mut acc: Vec<O> = Vec::new();
         for v in t {
-            let mut _v = f(v);
-            acc.append(&mut _v);
+            acc.append(&mut f(v));
         }
         acc
     }
