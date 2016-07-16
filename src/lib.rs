@@ -25,14 +25,14 @@ macro_rules! hado {
 
 pub trait Monad<O> {
     type Inner;
-    fn bind<F>(t: Self, f: F) -> O where F: FnOnce(Self::Inner) -> O ;
+    fn bind<F>(t: Self, mut f: F) -> O where F: FnMut(Self::Inner) -> O ;
     fn ret(Self::Inner) -> Self;
 }
 
 impl<T, O> Monad<Option<O>> for Option<T> {
     type Inner = T;
-    fn bind<F>(t: Option<T>, f: F) -> Option<O>
-        where F: FnOnce(T) -> Option<O> {
+    fn bind<F>(t: Option<T>, mut f: F) -> Option<O>
+        where F: FnMut(T) -> Option<O> {
         match t {
             Some(t) => f(t),
             None => None,
@@ -45,8 +45,8 @@ impl<T, O> Monad<Option<O>> for Option<T> {
 
 impl<T, O, E> Monad<Result<O, E>> for Result<T, E> {
     type Inner = T;
-    fn bind<F>(t: Result<T, E>, f: F) -> Result<O, E>
-        where F: FnOnce(T) -> Result<O, E> {
+    fn bind<F>(t: Result<T, E>, mut f: F) -> Result<O, E>
+        where F: FnMut(T) -> Result<O, E> {
         match t {
             Ok(t) => f(t),
             Err(e) => Err(e),
@@ -57,17 +57,18 @@ impl<T, O, E> Monad<Result<O, E>> for Result<T, E> {
     }
 }
 
-// impl<T, O> Monad<Vec<O>> for Vec<T> {
-//     type Inner = T;
-//     fn bind<F>(t: Self, f: F) -> Vec<O>
-//         where F: FnOnce(T) -> Vec<O> {
-//         let mut acc: Vec<O> = Vec::new();
-//         for v in t {
-//             acc.append(&mut f(v))
-//         }
-//         acc
-//     }
-//     fn ret(inner: T) -> Vec<T> {
-//         vec![inner]
-//     }
-// }
+impl<T, O> Monad<Vec<O>> for Vec<T> {
+    type Inner = T;
+    fn bind<F>(t: Self, mut f: F) -> Vec<O>
+        where F: FnMut(T) -> Vec<O> {
+        let mut acc: Vec<O> = Vec::new();
+        for v in t {
+            let mut _v = f(v);
+            acc.append(&mut _v);
+        }
+        acc
+    }
+    fn ret(inner: T) -> Vec<T> {
+        vec![inner]
+    }
+}
