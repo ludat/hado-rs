@@ -1,0 +1,6 @@
+[package]
+name = "hado"
+version = "0.1.0"
+authors = ["Lucas David Traverso <lucas6246@gmail.com>"]
+
+[dependencies]
