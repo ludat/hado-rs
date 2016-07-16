@@ -3,3 +3,16 @@ image: scorpil/rust:stable
 test:
   script:
     - cargo test
+
+pages:
+  stage: deploy
+  script:
+    - cargo doc
+    - mkdir public
+    - cp -r target/doc/* public
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
+
