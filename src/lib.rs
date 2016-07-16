@@ -1,11 +1,26 @@
 #![feature(type_ascription)]
 
 // TODO core of this crate
-// macro_rules! hado {
-//     ($v:ident <- $expr:expr;) => {
-//         $crate::Monad::bind()
-//     }
-// }
+macro_rules! hado {
+    (ret ( $ty:ty ) $expr:expr) => {
+        $crate::Monad::< $ty >::ret($expr)
+    };
+    (ret $expr:expr) => {
+        $crate::Monad::ret($expr)
+    };
+    (ign <- $expr:expr; $($rest:tt)*) => {
+        $crate::Monad::bind($expr, |_| hado!($($rest)*))
+    };
+    ($ident:ident <- $expr:expr; $($rest:tt)*) => {
+        $crate::Monad::bind($expr, |$ident| hado!($($rest)*))
+    };
+    ($stmt:stmt; $($rest:tt)*) => {
+        { $stmt ; hado!($($rest)*) }
+    };
+    ($expr:expr) => {
+        $expr
+    }
+}
 
 trait Monad<O> {
     type Inner;
@@ -59,6 +74,57 @@ impl<T, O> Monad<Vec<O>> for Vec<T> {
 #[cfg(test)]
 mod tests {
     use super::Monad;
+    #[test] fn hado() {
+        assert_eq!(
+            Some(3),
+            hado!(
+                x <- Some(1);
+                y <- Some(2);
+                Some(x + y)
+            )
+        );
+
+        assert_eq!(
+            Some(3),
+            hado!(
+                x <- Some(1);
+                println!("yey");
+                y <- Some(2);
+                Some(x + y)
+            )
+        );
+
+        assert_eq!(
+            vec![0, 0, 1, 1, 2, 2]: Vec<u32>,
+            hado!(
+                a <- vec![0, 1, 2];
+                b <- vec![a, a];
+                ret(Vec<u32>) b
+            )
+        );
+        assert_eq!(
+            hado!(
+                a <- vec![0, 1, 2];
+                b <- vec![a, a];
+                ret(Vec<u32>) b
+            ),
+            hado!(
+                a <- vec![0, 1, 2];
+                vec![a, a]
+            )
+        );
+        assert_eq!(
+            hado!(
+                ign <- vec![0, 1, 2];
+                let b = 7;
+                ret(Vec<u32>) b
+            ),
+            hado!(
+                ign <- vec![0, 1, 2];
+                vec![7]
+            )
+        );
+    }
     #[test] fn option_monad() {
         assert_eq!(
             Some(0),
