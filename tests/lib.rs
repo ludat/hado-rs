@@ -1,5 +1,3 @@
-#![feature(type_ascription)]
-
 #[macro_use]
 extern crate hado;
 
@@ -22,7 +20,7 @@ extern crate hado;
         )
     );
     assert_eq!(
-        vec![0, 0, 1, 1, 2, 2]: Vec<u32>,
+        { let t: Vec<u32> = vec![0, 0, 1, 1, 2, 2]; t },
         hado!(
             a <- vec![0, 1, 2];
             println!("a: {:?}", a);

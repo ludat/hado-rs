@@ -1,5 +1,3 @@
-#![feature(type_ascription)]
-
 #[macro_export]
 macro_rules! hado {
     (ret ( $ty:ty ) $expr:expr) => {
