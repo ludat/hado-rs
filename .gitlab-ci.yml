@@ -10,6 +10,7 @@ pages:
     - cargo doc
     - mkdir public
     - cp -r target/doc/* public
+    - cp misc/index.html public/
   artifacts:
     paths:
       - public
