@@ -25,7 +25,7 @@ macro_rules! hado {
 
 pub trait Monad<O> {
     type Inner;
-    fn bind<F>(t: Self, mut f: F) -> O where F: FnMut(Self::Inner) -> O ;
+    fn bind<F>(t: Self, f: F) -> O where F: FnMut(Self::Inner) -> O ;
     fn ret(Self::Inner) -> Self;
 }
 

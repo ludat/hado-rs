@@ -1,4 +1,3 @@
-#[macro_use]
 extern crate hado;
 
 use hado::Monad;

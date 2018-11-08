@@ -13,7 +13,7 @@ repository = "https://github.com/ludat/hado-rs"
 
 # This points to a file in the repository (relative to this `Cargo.toml`). The
 # contents of this file are stored and indexed in the registry.
-readme = "README.org"
+readme = "README.md"
 
 # This is a small list of keywords used to categorize and search for this
 # package.
